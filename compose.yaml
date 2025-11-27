@@ -1,0 +1,13 @@
+﻿services:
+  api:
+    image: api
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+
+  worker:
+    image: worker
+    build:
+      context: .
+      dockerfile: Worker/Dockerfile
+
