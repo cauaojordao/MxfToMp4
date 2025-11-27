@@ -28,9 +28,9 @@ public class MxfProcess
         InputBlobPath = inputBlobPath;
         CreatedAt = DateTime.UtcNow;
     }
-    
+
     #endregion
-    
+
     #region Business Methods
     public static MxfProcess Create(Guid id, string inputBlobPath)
     {

@@ -1,56 +1,41 @@
-﻿using System.Text.RegularExpressions;
-using Application.Commands;
-using Application.DTOs;
+﻿using Application.DTOs;
 using Application.Interfaces;
-using Domain.Entities;
+using Domain.Enums;
 using Domain.Repositories;
 
-namespace Application.Handlers;
+namespace Application.Commands.GenerateUploadSas;
 
-public class GenerateUploadSasHandler : ICommandHandler<GenerateUploadSasCommand, ProcessCreatedResult>
+public sealed class GenerateUploadSasHandler
+    : ICommandHandler<GenerateUploadSasCommand, GenerateUploadSasResult>
 {
-    private readonly IMxfProcessRepository _repo;
+    private readonly IMxfProcessRepository _repository;
     private readonly IBlobService _blob;
-    private readonly IQueueService _queue;
-    private readonly IEventPublisher _events;
-    private const string InputContainer = "mxf-input";
+    private readonly DateTimeOffset _sasExpiry = DateTimeOffset.UtcNow.AddMinutes(30);
 
-    public GenerateUploadSasHandler(IMxfProcessRepository repo, IBlobService blob, IQueueService queue, IEventPublisher events)
+    public GenerateUploadSasHandler(
+        IMxfProcessRepository repository,
+        IBlobService blob)
     {
-        _repo = repo;
+        _repository = repository;
         _blob = blob;
-        _queue = queue;
-        _events = events;
     }
 
-    public async Task<ProcessCreatedResult> HandleAsync(GenerateUploadSasCommand command, CancellationToken cancellationToken = default)
+    public async Task<GenerateUploadSasResult> HandleAsync(GenerateUploadSasCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(command.FileName)) throw new ArgumentException("fileName required");
-        if (!command.FileName.EndsWith(".mxf", StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException("Only .mxf allowed", nameof(command.FileName));
+        var process = await _repository.GetAsync(command.ProcessId, cancellationToken)
+            ?? throw new ArgumentException("Not found");
 
-        var id = Guid.NewGuid();
-        var blobPath = $"{id}/{SanitizeFileName(command.FileName)}";
+        if (process.Status != ProcessStatus.Uploading)
+            throw new InvalidOperationException($"Process {command.ProcessId} does not allow upload in state {process.Status}");
 
-        // generate SAS for upload
-        Uri sasUri = await _blob.GenerateUploadSasUrlAsync(InputContainer, blobPath, command.SasValidity, cancellationToken);
-        var expiresAt = DateTimeOffset.UtcNow.Add(command.SasValidity);
+        Uri sas = await _blob.GenerateUploadSasUrlAsync(
+            blobPath: process.InputBlobPath,
+            expiry: _sasExpiry,
+            cancellationToken);
 
-        // create domain aggregate and persist
-        var aggregate = MxfProcess.Create(id,$"{InputContainer}/{blobPath}");
-        // note: MarkUploadCompleted will be called in CompleteUploadCommand handler
-        await _repo.SaveAsync(aggregate);
-
-        // publish initial event (uploading)
-        await _events.PublishEventAsync(id, new { status = "uploading", blob = aggregate.InputBlobPath }, cancellationToken);
-
-        return new ProcessCreatedResult
-        {
-            ProcessId = id,
-            UploadUrl = sasUri,
-            BlobPath = aggregate.InputBlobPath,
-            ExpiresAt = expiresAt.UtcDateTime
-        };
+        return new GenerateUploadSasResult(
+            UploadUrl: sas.ToString(),
+            ExpiresAt: _sasExpiry
+        );
     }
-    private static string SanitizeFileName(string name) => Regex.Replace(name, @"[^\w\-.]", "_");
 }
