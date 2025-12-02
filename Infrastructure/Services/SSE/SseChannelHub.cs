@@ -21,9 +21,9 @@ public sealed class SseChannelHub
         return channel.Reader;
     }
 
-    public async Task PublishAsync(Guid processId, SseMessage message, CancellationToken ct)
+    public async Task PublishAsync(string topic, SseMessage message, CancellationToken ct)
     {
-        if (_topics.TryGetValue(processId.ToString(), out var channel))
+        if (_topics.TryGetValue(topic, out var channel))
         {
             await channel.Writer.WriteAsync(message, ct);
         }

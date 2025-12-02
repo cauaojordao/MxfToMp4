@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Application\\Application.csproj": {}
+    "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Application\\Application.csproj": {}
   },
   "projects": {
-    "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Application\\Application.csproj": {
+    "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\caua.otaviano.jordao\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Application\\obj\\",
+        "projectPath": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\dinoe\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\caua.otaviano.jordao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\dinoe\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,14 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\Domain.csproj"
+              "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\Domain.csproj"
               }
             }
           }
@@ -52,6 +53,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Options": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -68,24 +75,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.416/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.411/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\Domain.csproj": {
+    "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\caua.otaviano.jordao\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\caua.otaviano.jordao\\source\\repos\\cauaojordao\\MxfToMp4\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\dinoe\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\dinoe\\Documentos\\.Dev\\Faculdade\\MxfToMp4\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\caua.otaviano.jordao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\dinoe\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -94,6 +101,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -132,7 +140,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.416/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.411/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

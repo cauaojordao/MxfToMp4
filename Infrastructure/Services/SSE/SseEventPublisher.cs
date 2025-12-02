@@ -22,6 +22,7 @@ public sealed class SseEventPublisher : IEventPublisher
             Timestamp: DateTimeOffset.UtcNow
         );
 
-        await _hub.PublishAsync(processId, evt, ct);
+        var topic = $"process:{processId}";
+        await _hub.PublishAsync(topic, evt, ct);
     }
 }

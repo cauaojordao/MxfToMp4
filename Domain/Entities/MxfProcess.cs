@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using System.Text.Json.Serialization;
+using Domain.Enums;
 
 namespace Domain.Entities;
 
@@ -8,8 +9,8 @@ public class MxfProcess
     public Guid Id { get; private set; }
     public ProcessStatus Status { get; private set; }
 
-    public string InputBlobPath { get; private set; }
-    public string? OutputBlobPath { get; private set; }
+    public string Path { get; private set; }
+    public string OutputBlobPath { get; private set; } = null!;
     public long FileSize { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
@@ -21,11 +22,38 @@ public class MxfProcess
 
     #region ctors
 
-    private MxfProcess(Guid id, string inputBlobPath)
+    [JsonConstructor]
+    internal MxfProcess(
+        Guid id,
+        ProcessStatus status,
+        string path,
+        string? outputBlobPath,
+        long fileSize,
+        DateTime createdAt,
+        DateTime? uploadCompletedAt,
+        DateTime? processingStartedAt,
+        DateTime? processingCompletedAt,
+        string? errorMessage)
+    {
+        Id = id;
+        Status = status;
+        FileSize = fileSize;
+        CreatedAt = createdAt;
+        UploadCompletedAt = uploadCompletedAt;
+        ProcessingStartedAt = processingStartedAt;
+        ProcessingCompletedAt = processingCompletedAt;
+        ErrorMessage = errorMessage;
+        Path = path;
+        OutputBlobPath = outputBlobPath ?? "";
+    }
+
+
+
+    private MxfProcess(Guid id, string path)
     {
         Id = id;
         Status = ProcessStatus.Uploading;
-        InputBlobPath = inputBlobPath;
+        Path = path;
         CreatedAt = DateTime.UtcNow;
     }
 

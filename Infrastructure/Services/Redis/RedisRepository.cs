@@ -1,17 +1,20 @@
-﻿using Domain.Entities;
+﻿using System.Text.Json;
+using Domain.Entities;
 using Domain.Repositories;
 using StackExchange.Redis;
-using System.Text.Json;
 
-namespace Infra.Redis;
+namespace Infrastructure.Services.Redis;
 
 public sealed class RedisMxfProcessRepository : IMxfProcessRepository
 {
     private readonly IDatabase _db;
-    private static readonly JsonSerializerOptions _jsonOptions = new()
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false
+        WriteIndented = false,
+        IncludeFields = false,
+        PropertyNameCaseInsensitive = true
     };
 
     public RedisMxfProcessRepository(IConnectionMultiplexer redis)
@@ -26,12 +29,13 @@ public sealed class RedisMxfProcessRepository : IMxfProcessRepository
         if (!json.HasValue)
             return null;
 
-        return JsonSerializer.Deserialize<MxfProcess>(json!, _jsonOptions);
+        var process = JsonSerializer.Deserialize<MxfProcess>(json!, JsonOptions);
+        return process;
     }
 
     public async Task SaveAsync(MxfProcess process, CancellationToken ct = default)
     {
-        var json = JsonSerializer.Serialize(process, _jsonOptions);
+        var json = JsonSerializer.Serialize(process, JsonOptions);
 
         await _db.StringSetAsync(process.Id.ToString(), json, when: When.Always);
     }

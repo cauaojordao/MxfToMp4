@@ -1,10 +1,11 @@
 ﻿using Application.Commands;
 using Application.Interfaces;
+using Application.Interfaces.Mediator;
 using Domain.Repositories;
 
 namespace Application.Handlers;
 
-public class StartProcessingHandler : ICommandHandler<StartProcessingCommand, bool>
+public class StartProcessingHandler : IRequestHandler<StartProcessingCommand, bool>
 {
     private readonly IMxfProcessRepository _repo;
     private readonly IEventPublisher _events;
@@ -15,15 +16,15 @@ public class StartProcessingHandler : ICommandHandler<StartProcessingCommand, bo
         _events = events;
     }
 
-    public async Task<bool> HandleAsync(StartProcessingCommand command, CancellationToken cancellationToken = default)
+    public async Task<bool> Handle(StartProcessingCommand command, CancellationToken cancellationToken = default)
     {
-        var aggregate = await _repo.GetAsync(command.ProcessId);
+        var aggregate = await _repo.GetAsync(command.ProcessId, cancellationToken);
         if (aggregate == null) throw new InvalidOperationException("Process not found");
 
         aggregate.MarkProcessingStarted();
-        await _repo.SaveAsync(aggregate);
+        await _repo.SaveAsync(aggregate, cancellationToken); 
 
-        await _events.PublishEventAsync(command.ProcessId, new { status = "processing" }, cancellationToken);
+        await _events.PublishAsync(command.ProcessId, new { status = "processing" }, cancellationToken);
 
         return true;
     }

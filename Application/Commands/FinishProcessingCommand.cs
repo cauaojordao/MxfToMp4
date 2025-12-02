@@ -1,6 +1,8 @@
-﻿namespace Application.Commands;
+﻿using Application.Interfaces.Mediator;
 
-public sealed class FinishProcessingCommand
+namespace Application.Commands;
+
+public sealed class FinishProcessingCommand : IRequest<bool>
 {
     public Guid ProcessId { get; init; }
     public string OutputBlobPath { get; init; } = null!;

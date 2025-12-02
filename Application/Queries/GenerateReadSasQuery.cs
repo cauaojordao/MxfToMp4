@@ -1,7 +1,9 @@
-﻿namespace Application.Queries;
+﻿using Application.Interfaces.Mediator;
 
-public sealed class GenerateReadSasQuery
+namespace Application.Queries;
+
+public sealed class GenerateReadSasQuery : IRequest<Uri>
 {
     public Guid ProcessId { get; init; }
-    public TimeSpan ValidFor { get; init; } = TimeSpan.FromMinutes(15);
+    public DateTimeOffset ValidFor { get; init; } = DateTimeOffset.UtcNow.AddMinutes(15);
 }

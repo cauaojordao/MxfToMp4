@@ -1,6 +1,9 @@
-﻿namespace Application.Queries;
+﻿using Application.DTOs;
+using Application.Interfaces.Mediator;
 
-public sealed class GetStatusQuery
+namespace Application.Queries;
+
+public sealed class GetStatusQuery : IRequest<StatusDto>
 {
     public Guid ProcessId { get; init; }
 }
