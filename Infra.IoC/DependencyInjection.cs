@@ -42,8 +42,6 @@ public static class DependencyInjection
         
         s.AddScoped<IRequestHandler<StartUploadCommand, StartUploadResult>, StartUploadHandler>();
         
-        s.AddScoped<IRequestHandler<GenerateReadSasQuery, Uri>, GenerateReadSasHandler>();
-        
         s.AddScoped<IRequestHandler<StartProcessingCommand, bool>, StartProcessingHandler>();
         s.AddScoped<IRequestHandler<FinishProcessingCommand, bool>, FinishProcessingHandler>();
         

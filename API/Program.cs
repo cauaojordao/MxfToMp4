@@ -1,11 +1,6 @@
-using Application.Interfaces;
-using Azure.Identity;
-using Azure.Storage.Blobs;
-using Azure.Storage.Queues;
 using Infra.IoC;
 using Infrastructure.Services.Storage;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,12 +14,12 @@ builder.Services.Configure<FormOptions>(options =>
     options.ValueLengthLimit = int.MaxValue;
     options.MultipartBodyLengthLimit = long.MaxValue;
     options.MultipartHeadersCountLimit = 32;
-    options.MemoryBufferThreshold = int.MaxValue; // Evita buffering automático para streaming
+    options.MemoryBufferThreshold = int.MaxValue;
 });
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = null; // streaming sem limite imposto pelo servidor
+    options.Limits.MaxRequestBodySize = null;
     options.Limits.MinRequestBodyDataRate = null;
     options.Limits.MinResponseDataRate = null;
 });

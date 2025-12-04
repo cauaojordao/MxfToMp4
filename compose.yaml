@@ -1,18 +1,35 @@
 ﻿services:
   api:
-    image: api
     build:
       context: .
       dockerfile: API/Dockerfile
+    user: root
+    volumes:
+      - mxf-shared:/app/temp
+    env_file: .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
 
   worker:
     image: worker
     build:
       context: .
       dockerfile: Worker/Dockerfile
+    env_file: .env
+    user: root
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - mxf-shared:/app/temp
+    depends_on:
+      - redis
 
   redis:
-    image: redis:7.2
+    image: redis:7-alpine
     container_name: redis
     command: [ "redis-server", "--appendonly", "yes" ]
     ports:
@@ -22,4 +39,5 @@
     restart: unless-stopped
 
 volumes:
+  mxf-shared:
   redis-data:

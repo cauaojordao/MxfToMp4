@@ -21,15 +21,13 @@ public sealed class MxfController : ControllerBase
         _configuration = configuration;
     }
 
-    /// <summary>
-    /// Fallback para clientes que não usam SSE — consulta status atual.
-    /// </summary>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetStatus([FromRoute] Guid id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetStatusQuery { ProcessId = id }, ct);
         return Ok(result);
     }
+
     [HttpPost("upload")]
     [RequestSizeLimit(long.MaxValue)]
     public async Task<IActionResult> UploadToApi(IFormFile file, CancellationToken ct)
@@ -39,13 +37,10 @@ public sealed class MxfController : ControllerBase
 
         var processId = Guid.NewGuid();
 
-        // pasta temporária do worker
-        var tempFolder = _configuration.GetValue<string>("Worker:TempFolder")
-                         ?? Path.GetTempPath();
+        var tempFolder = _configuration.GetValue<string>("Worker:TempFolder") ?? "/app/temp";
 
         Directory.CreateDirectory(tempFolder);
 
-        // arquivo será salvo como: {tempFolder}/{guid}.mxf
         var localPath = Path.Combine(tempFolder, $"{processId}.mxf");
 
         await using (var fs = System.IO.File.Create(localPath))
@@ -54,7 +49,6 @@ public sealed class MxfController : ControllerBase
             await fs.FlushAsync(ct);
         }
 
-        // envia comando para criar o processo e enfileirar
         var result = await _mediator.Send(new StartUploadCommand
         {
             Id = processId,

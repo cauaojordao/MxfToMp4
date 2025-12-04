@@ -1,4 +1,6 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+
+RUN mkdir -p /app/temp && chmod -R 777 /app/temp
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -21,3 +23,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "API.dll"]
+

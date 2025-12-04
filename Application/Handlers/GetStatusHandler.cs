@@ -28,7 +28,6 @@ public class GetStatusHandler : IRequestHandler<GetStatusQuery, StatusDto>
 
         if (aggregate.Status == ProcessStatus.Completed)
         {
-            // SAS do container inteiro
             var sas = await _blob.GenerateReadSasAsync(aggregate.OutputBlobPath);
             readUrl = sas.ToString();
         }

@@ -46,6 +46,8 @@ public sealed class MxfWorkerHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
+        Directory.CreateDirectory(_tempFolder);
+
         var queue = _queueClientRoot.GetQueueClient(_queueName);
         var poison = _queueClientRoot.GetQueueClient(_poisonName);
 
@@ -90,6 +92,9 @@ public sealed class MxfWorkerHostedService : BackgroundService
         QueueMessage msg,
         CancellationToken ct)
     {
+        
+        Directory.CreateDirectory(_tempFolder);
+        
         _logger.LogInformation("Dequeued {Id}: {Body}", msg.MessageId, msg.MessageText);
 
         if (!Guid.TryParse(msg.MessageText, out var processId))
@@ -98,9 +103,8 @@ public sealed class MxfWorkerHostedService : BackgroundService
             return;
         }
 
-        // capture message id and initial popReceipt into local vars we can mutate
         var messageId = msg.MessageId;
-        var popReceipt = msg.PopReceipt; // <-- use this mutable variable instead of msg.PopReceipt
+        var popReceipt = msg.PopReceipt;
 
         using var scope = _scopeFactory.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<IMxfProcessRepository>();
@@ -112,7 +116,6 @@ public sealed class MxfWorkerHostedService : BackgroundService
 
         try
         {
-            // → marca como started (application layer)
             await mediator.Send(new StartProcessingCommand { ProcessId = processId }, ct);
 
             var aggregate = await repo.GetAsync(processId, ct)
@@ -122,16 +125,13 @@ public sealed class MxfWorkerHostedService : BackgroundService
             if (string.IsNullOrWhiteSpace(input) || !File.Exists(input))
                 throw new FileNotFoundException($"Input file not found: {input}");
 
-            // → Cria pasta temporária
-            tmpFolder = Path.Combine(_tempFolder, $"{processId}_hls");
+            tmpFolder = Path.Combine(_tempFolder, $"{processId}");
             Directory.CreateDirectory(tmpFolder);
 
-            // → progresso que atualiza visibility e atualiza o popReceipt local
             var progress = new Progress<double>(async _ =>
             {
                 try
                 {
-                    // IMPORTANT: pass current popReceipt and then capture the new one from response
                     var updateResp = await queue.UpdateMessageAsync(
                         messageId,
                         popReceipt,
@@ -139,28 +139,23 @@ public sealed class MxfWorkerHostedService : BackgroundService
                         TimeSpan.FromSeconds(_visibilityTimeout),
                         ct);
 
-                    // update local popReceipt with the new value returned by the service
                     popReceipt = updateResp.Value.PopReceipt;
                 }
                 catch (Exception ex)
                 {
-                    // não deixe a atualização de visibility quebrar o processamento
                     _logger.LogDebug(ex, "Failed to extend visibility for message {MessageId}", messageId);
                 }
             });
 
-            // before HLS stuff
             var outputFile = Path.Combine(_tempFolder, $"{processId}.mp4");
 
             await _ffmpeg.RunAsync(input, outputFile, progress, ct);
 
-// upload mp4
             using (var fs = File.OpenRead(outputFile))
             {
                 await blob.UploadAsync($"{processId}.mp4", fs, ct);
             }
 
-// save path in domain
             await mediator.Send(new FinishProcessingCommand
             {
                 ProcessId = processId,
@@ -194,7 +189,6 @@ public sealed class MxfWorkerHostedService : BackgroundService
             {
                 try
                 {
-                    // If we want to set a short retry visibility, use current popReceipt
                     var upd = await queue.UpdateMessageAsync(
                         messageId,
                         popReceipt,

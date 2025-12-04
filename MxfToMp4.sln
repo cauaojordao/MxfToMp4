@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47563C01-FF56-4C25-9A14-25D246CEF2D0}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		.env = .env
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker", "Worker\Worker.csproj", "{ECD80D90-DE5A-4D2F-BFFB-E6F52D5BBF79}"
